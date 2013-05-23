@@ -1,0 +1,12 @@
+{application, spark_rabbitc_srv,
+ [
+  {description, "RabbitMQ client for spark. Absract some details away"},
+  {vsn, "${PACKAGE_VERSION}"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { spark_rabbitc_app, []}},
+  {env, []}
+ ]}.
