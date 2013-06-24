@@ -1,4 +1,4 @@
--module(spark_rabbitc_app).
+-module(spark_app_config_app).
 
 -behaviour(application).
 
@@ -10,7 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
-    spark_rabbitc_sup:start_link().
+    spark_app_config_sup:start_link().
 
 stop(_State) ->
     ok.
