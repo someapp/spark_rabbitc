@@ -10,6 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
+    spark_app_config_sup:start_link(),
     spark_rabbitc_sup:start_link().
 
 stop(_State) ->

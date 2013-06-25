@@ -28,7 +28,7 @@ init()->init([]).
 
 init([]) ->
     Children = [?CHILD(spark_app_config_srv, worker)],
-    {ok, {?DEFAULT_RESTART, Children}};
+    {ok, { ?DEFAULT_RESTART, Children} }.
 
 init(_Args)->
     init([]).
