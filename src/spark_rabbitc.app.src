@@ -10,12 +10,15 @@
 		  spark_app_config
                  ]},
   {modules,[
+	app_helper,
 	spark_rabbitc_app,
 	spark_rabbitc_sup,
+	spark_rabbitc_app_config,
 	spark_rabbitc_srv	
   ]},
-  {mod, { spark_rabbitc_app, []}},
+  {mod, {spark_rabbitc_app, []}},
   {env, [
-	{conf, "spark_config1.config"}
+  	{rabbit_config, "conf/spark_rabbit.config"},
+  	{rest_config, "conf/spark_rest.config"}
 	]}
  ]}.

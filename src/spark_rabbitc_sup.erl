@@ -20,7 +20,7 @@
 %% ===================================================================
 
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, [{spawn_opts, ?SPAWN_OPTS}]).
+    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
 %% ===================================================================
 %% Supervisor callbacks
@@ -28,6 +28,7 @@ start_link() ->
 
 init([]) ->
     Children = [
+	?CHILD(spark_app_config,worker),
 	?CHILD(spark_rabbitc_srv,worker)
 		
 	],
