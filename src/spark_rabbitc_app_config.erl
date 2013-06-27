@@ -3,30 +3,30 @@
 
 -export([
    load_config/0,
-	 load_config/1,
+   load_config/1,
    load_config/2,
    load_rest_config/1,
    load_amqp_config/1,
-	 get_log_config/0,
+   get_log_config/0,
    get_full_resource_url/2,
    get_rest_environment/1,
-	 get_rabbit_environment/1,
+   get_rabbit_environment/1,
    get_api_vsn/1,
 
    spark_api_endpoint/1, 
-	 spark_app_id/1,
+   spark_app_id/1,
    spark_brand_id/1,
-	 spark_client_secret/1,
-	 spark_oauth_access_token/1, 
-	 spark_communityid_brandid_map/1,
-	 auth_profile_miniProfile/1, 
-	 profile_memberstatus/1, 
-%	 send_missed_im/1,
-	 rabbitmq_endpoint/1,
- 	 rest_client_timeout_in_sec/1,
- 	 rest_call_retry_attempt/1,
- 	 rabbitmq_client_timeout_in_sec/1,
- 	 rabbitmq_client_retry_attempt/1,
+   spark_client_secret/1,
+   spark_oauth_access_token/1, 
+   spark_communityid_brandid_map/1,
+   auth_profile_miniProfile/1, 
+   profile_memberstatus/1, 
+   send_missed_im/1,
+   rabbitmq_endpoint/1,
+   rest_client_timeout_in_sec/1,
+   rest_call_retry_attempt/1,
+   rabbitmq_client_timeout_in_sec/1,
+   rabbitmq_client_retry_attempt/1,
 
    get_rabbit_username/1,
    get_rabbit_password/1,
@@ -154,6 +154,10 @@ auth_profile_miniProfile(CfgList) ->
 profile_memberstatus(CfgList)->
    get_full_resource_url(CfgList, profile_memberstatus).
 
+
+send_missed_im(CfgList)->
+   get_full_resource_url(CfgList,send_missed_im).
+
 get_full_resource_url(CfgList, Key)->
    BaseUrl = spark_api_endpoint(CfgList),
    ResUrl = get_config_value_env(Key,CfgList),
@@ -252,7 +256,7 @@ load_setting(ApiConf,RabbitConf),
 
 load_amqp_config(RabbitConf) ->
    ConfList = load_config(RabbitConf, spark_rabbit),
-   Environment	= get_rabbit_environment(ConfList),
+   Environment = get_rabbit_environment(ConfList),
    UserName    = get_rabbit_username(ConfList),
    Password    = get_rabbit_password(ConfList),
    VirtualHost = get_rabbit_virtual_host(ConfList),
