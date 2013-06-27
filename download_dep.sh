@@ -2,8 +2,8 @@
 
 get_ejabberd_header(){
 	echo "Downloading ejabberd.hrl and jlib.hrl"
-	curl -O "https://raw.github.com/processone/ejabberd/master/src/ejabberd.hrl"
-	curl -O "https://raw.github.com/processone/ejabberd/master/src/jlib.hrl"
+	curl -O "https://raw.github.com/processone/ejabberd/master/include/ejabberd.hrl"
+	curl -O "https://raw.github.com/processone/ejabberd/master/include/jlib.hrl"
 }
 
 get_ejabberd_config(){
