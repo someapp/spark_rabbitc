@@ -127,7 +127,6 @@ load_setting(ApiConf,RabbitConf),
 load_amqp_config(RabbitConf) ->
    ConfList = load_config(RabbitConf, spark_rabbit),
    Environment	= proplists:get_value(environment,ConfList,[]),
-   
    UserName    = proplists:get_value(username,ConfList,<<"guest">>),
    Password    = proplists:get_value(password,ConfList,<<"V2pOV2JHTXpVVDA9">>),
    VirtualHost = proplists:get_value(virtual_host,ConfList,<<"/">>),
@@ -157,6 +156,40 @@ load_amqp_config(RabbitConf) ->
 
 load_rest_config(ApiConf)->
    ConfList = load_config(ApiConf, spark_rest),
+   Environment	= proplists:get_value(environment,ConfList,[]),
+   Api_endpoint = proplists:get_value(spark_api_endpoint, 	ConfList,[]),
+   App_id = proplists:get_value(spark_app_id, ConfList,"1054"),
+   Brand_id = proplists:get_value(spark_brand_id, 
+	ConfList,"90510"),
+   Client_secret = proplists:get_value(spark_client_secret, 
+	ConfList,default_client_secret()),
+   Create_oauth_accesstoken = proplists:get_value(spark_create_oauth_accesstoken, ConfList,default_spark_create_oauth_accesstoken()),
+   Auth_profile_miniProfile= 
+proplists:get_value(auth_profile_miniProfile,ConfList,default_auth_profile_miniProfile()),
+   Member_Status = proplists:get_value(profile_memberstatus,ConfList,default_profile_memberstatus())
+   IdMap = proplists:get_value(profile_memberstatus,ConfList,default_community2brandId()),
+    
+    
+
+
+default_client_secret()->
+  "nZGVVfj8dfaBPKsx_dmcRXQml8o5N-iivf5lBkrAmLQ1". 
+
+default_spark_create_oauth_accesstoken()->
+  "/brandId/{brandId}/oauth2/accesstoken/application/{applicationId}".
+
+default_auth_profile_miniProfile()->
+  "/brandId/{brandId}/profile/attributeset/miniProfile/{targetMemberId}".
+
+default_profile_memberstatus()->
+  "/brandId/{brandId}/application/{applicationId}/member/{memberId}/status".
+
+default_community2brandId()->
+  [{spark,"1","1001"},
+   {jdate,"3","1003"},
+   {cupid,"10","1015"},
+   {bbw,"23","90410"},
+   {blacksingle,"24","90510"}]. 
    
 
 load_config(FileName, Key) ->

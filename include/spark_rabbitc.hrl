@@ -17,9 +17,9 @@
 
 -record(rest_conf,{
 	base_url = [],
-	resource_url = {},
+	resource_urls = orddict:new(),
 	app_id = -1,
-	access_token = 0
+	client_secret = 0
 	http_method = http,
 	ssl_key = false
 }).
