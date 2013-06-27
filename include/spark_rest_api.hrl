@@ -1,4 +1,3 @@
 -record(resouce,{       
-	idMap    = [],
-	
- }).
+	 idMap    = []}
+).

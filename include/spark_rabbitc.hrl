@@ -17,19 +17,22 @@
 
 -record(rest_conf,{
 	base_url = [],
-	resource_urls = orddict:new(),
+	resource_urls = dict:new(),
 	app_id = -1,
-	client_secret = 0
+	access_token = 0,
+	idMap = [],
 	http_method = http,
 	ssl_key = false
 }).
 
 -record(state,{
+	rest_env = <<"stgv3">>,
+	rabbit_env = <<"stgv3">>,
 	rabbitconf= #rabbit_conf{},
 	restconf = #rest_conf{}, 
 	node = node(),
-	rest_conf_file = [],
-	rabbit_conf_file = [],
+	rest_conf_file = <<"spark_rest.config">>,
+	rabbit_conf_file =<<"spark_rabbit.config">>,
 	logfile_conf_file = []
 }).
 
