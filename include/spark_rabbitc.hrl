@@ -3,36 +3,47 @@
 
 -include_lib("amqp_client/include/amqp_client.hrl").
 
+
 -record(rabbit_conf, {
-		 path		    = ?DEFAULT_PATH, 
-		 format		    = ?DEFAULT_FORMAT,
-		 idMap		    = [],
+		 environment	= <<"stgv3">>,
+		 
+		 format		    = text,
 		 host		     = <<"">>,
-		 connection_timeout  = ?HIBERNATE_TIMEOUT,
-	  	 name = ?DEFAULT_NAME,
-    		 exchange = ?DEFAULT_EXCHANGE, 
-		 queue=?DEFAULT_QUEUE,
-		 amqp_params = #amqp_params_network {}
+		 connection_timeout  = 5000,
+	  	 name = <<>>,
+    		 exchange = <<>>, 
+		 queue= <<>>,
+		 amqp_params = #amqp_params_network {
+		     host = "localhost",
+		     username = <<"guest">>,
+		     password = <<"guest">>,
+		     port = 5672,
+		     virtual_host = <<"/">>,
+		     heartbeat = 5
+		 }
 }).
 
 -record(rest_conf,{
 	base_url = [],
-	resource_urls = dict:new(),
+	rest_env = <<"">>,
+	api_vsn = <<"2">>,
+	api_endpoint = [],
 	app_id = -1,
-	access_token = 0,
-	idMap = [],
+	client_secret = [],
+ 	resource_urls = dict:new(),
+	idMap = dict:new(),
+	retry = -1,
+	timeout = -1,
 	http_method = http,
 	ssl_key = false
 }).
 
 -record(state,{
-	rest_env = <<"stgv3">>,
-	rabbit_env = <<"stgv3">>,
 	rabbitconf= #rabbit_conf{},
 	restconf = #rest_conf{}, 
 	node = node(),
-	rest_conf_file = <<"spark_rest.config">>,
-	rabbit_conf_file =<<"spark_rabbit.config">>,
+	rest_conf_file = [],
+	rabbit_conf_file = [],
 	logfile_conf_file = []
 }).
 
