@@ -17,7 +17,7 @@
 	 spark_app_id/1,
    spark_brand_id/1,
 	 spark_client_secret/1,
-	 spark_oauth_access_token/1, 
+	 create_oauth_accesstoken/1, 
 	 spark_communityid_brandid_map/1,
 	 auth_profile_miniProfile/1, 
 	 profile_memberstatus/1, 
@@ -123,7 +123,12 @@ get_api_vsn(CfgList)->
 %% @end
 -spec spark_api_endpoint(list())-> url() | fatalError().
 spark_api_endpoint(CfgList) ->
-   get_config_value_env(spark_api_endpoint,CfgList, default_api_endpoint()).
+   CfgList1 = get_api_urls(CfgList),
+   get_config_value_env(api_endpoint,CfgList1, 
+       			default_api_endpoint()).
+
+get_api_urls(CfgList)->
+   CfgList1 = get_config_value_env(api_url,CfgList, []).
 
 -spec spark_app_id(list()) -> integer() | fatalError().
 spark_app_id(CfgList)->
@@ -138,10 +143,10 @@ spark_client_secret(CfgList)->
    get_config_value_env(spark_client_secret,CfgList, default_client_secret()).
 
 %% @doc Get the oauth access token environment variable.
--spec spark_oauth_access_token(list()) -> accessToken() | undefined.
-spark_oauth_access_token(CfgList) ->
-
-   get_full_resource_url(CfgList,default_create_oauth_accesstoken()).
+-spec create_oauth_accesstoken(list()) -> accessToken() | undefined.
+create_oauth_accesstoken(CfgList) ->
+   CfgList1 = get_api_urls(CfgList),
+   get_full_resource_url(CfgList1,create_oauth_accesstoken).
 
 spark_communityid_brandid_map(CfgList)->
    get_config_value_env(community2brandId, CfgList,default_community2brandId()).
@@ -150,13 +155,16 @@ spark_communityid_brandid_map(CfgList)->
 %% @end
 -spec auth_profile_miniProfile(list())-> string() | undefined.
 auth_profile_miniProfile(CfgList) ->
-   get_full_resource_url(CfgList,default_auth_profile_miniProfile()).
+   CfgList1 = get_api_urls(CfgList),
+   get_full_resource_url(CfgList1, auth_profile_miniProfile).
 
 profile_memberstatus(CfgList)->
-   get_full_resource_url(CfgList, default_profile_memberstatus()).
+   CfgList1 = get_api_urls(CfgList),
+   get_full_resource_url(CfgList1, profile_memberstatus).
 
 send_missed_im(CfgList)->
-   get_full_resource_url(CfgList,default_send_missed_im()).
+   CfgList1 = get_api_urls(CfgList),
+   get_full_resource_url(CfgList1,send_missed_im).
   
 %% @doc Get the rabbitmq endpoint environment variable.
 %% @end
@@ -296,28 +304,53 @@ load_rest_config(ApiConf)->
    App_id = spark_app_id(CfgList),
    Brand_id = spark_brand_id(CfgList),
    Client_secret = spark_client_secret(CfgList),
-   Create_oauth_accesstoken = spark_oauth_access_token(CfgList),
+   Create_oauth_accesstoken = create_oauth_accesstoken(CfgList),
    Auth_profile_miniProfile= auth_profile_miniProfile(CfgList),
    Member_Status = profile_memberstatus(CfgList),
    IdMap = spark_communityid_brandid_map(CfgList),
-   ResUrls0 =  dict:new(),
-   ResUrl1 = dict:append(oauth_access_token, Create_oauth_accesstoken, ResUrls0),
-   ResUrl2 = dict:append(auth_profile_miniProfile, Auth_profile_miniProfile, ResUrl1),
-   ResUrl3 = dict:append(profile_memberstatus, Member_Status, ResUrl2),
+   Urls = get_api_urls(CfgList),
 
    #rest_conf{
 	     base_url = Api_endpoint,
        	     rest_env = Environment,
-	     resource_urls = ResUrl3,
+	     resource_urls = ResUrl,
 	     app_id = App_id,
 	     client_secret = Client_secret,
+	     resource_urls = resource_table(Urls),
              idMap = IdMap,
              retry = rest_call_retry_attempt(),
              timeout = rest_client_timeout_in_sec(),
 	     http_method = get_https_or_http(),
 	     ssl_key = get_ssl()
-   }.
+   },
 
+-record(rest_conf,{
+	base_url = [],
+	rest_env = <<"">>,
+	api_vsn = <<"2">>,
+	api_endpoint = [],
+	app_id = -1,
+	client_secret = [],
+ 	resource_urls = dict:new(),
+	idMap = dict:new(),
+	retry = -1,
+	timeout = -1,
+	http_method = http,
+	ssl_key = false
+}).
+
+
+
+  .
+
+resource_table([])-> 
+    dict:new();
+
+resource_table(Res_Urls)->
+    dict:from_list(Res_Urls);
+
+resource_table(_)-> 
+    resource_table([]).   
 
 ensure_binary(undefined)->
     undefined;
