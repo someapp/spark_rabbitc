@@ -5,8 +5,7 @@
 
 
 -record(rabbit_conf, {
-		 environment	= <<"stgv3">>,
-		 
+		 environment	= <<"stgv3">>,	 
 		 format		    = text,
 		 host		     = <<"">>,
 		 connection_timeout  = 5000,
@@ -25,8 +24,8 @@
 
 -record(rest_conf,{
 	base_url = [],
-	rest_env = <<"">>,
-	api_vsn = <<"2">>,
+	rest_env = [],
+	api_vsn = [],
 	api_endpoint = [],
 	app_id = -1,
 	client_secret = [],
