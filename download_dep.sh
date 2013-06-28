@@ -7,8 +7,7 @@ get_ejabberd_header(){
 }
 
 get_ejabberd_config(){
-	echo "Downloading ejabberd config"
-	curl -O "https://raw.github.com/someapp/spark_modules/clean_auth/apps/ejabberd_auth_spark/src/ejabberd_auth_spark_config.erl"
+
 	echo "Downloading rabbitmq_server gen_server2"
 	curl -O "https://raw.github.com/rabbitmq/rabbitmq-server/master/src/gen_server2.erl"
 
@@ -22,7 +21,7 @@ move_header(){
 
 move_ejabberd_files(){
 	echo "Move header files to include dir"
-	mv -vf ejabberd_auth_spark_config.erl ./src	
+
 	mv -vf gen_server2.erl ./src
 }
 
