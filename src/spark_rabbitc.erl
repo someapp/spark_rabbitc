@@ -12,7 +12,7 @@
 		disconnect/0,
 		subscribe/0,
 		subscribe/1,
-		consume/1,
+		consume/2,
 		status/0
 		]).
 
@@ -32,7 +32,7 @@
 }).
  
 %% Internal state
--record(state, {
+-record(rabbitc_state, {
 	cur_con = #cur_con{},
 	rabbitmq_restart_timeout = 5000 :: pos_integer(), % restart timeout
 	amqp_params =  #amqp_params_network{},
@@ -78,7 +78,7 @@ start_link() ->
  
 init(_Args) ->
 	gen_server:cast(self(), connect),
-	{ok, #state{rabbitmq_restart_timeout = 5000}}.
+	{ok, #rabbitc_state{rabbitmq_restart_timeout = 5000}}.
  
 %%
 %% @doc Handling all messages from RabbitMQ
@@ -86,7 +86,7 @@ init(_Args) ->
 handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue}, 
 	#amqp_msg{props = #'P_basic'{reply_to = ReplyTo}, payload = Body}} = _Msg, 
 	Channel = #cur_con.channel,
-	#state{Channel = Channel} = State) ->
+	#rabbitc_state{Channel = Channel} = State) ->
 	amqp_channel:cast(Channel, #'basic.ack'{delivery_tag = Tag}),
 	Message = binary_to_term(Body),
 %	try
@@ -99,11 +99,11 @@ handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue},
 % 	end,
 	{noreply, State}.
  
-handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #state{connection = Connection, connection_ref = ConnectionRef} = State) ->
+handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #rabbitc_state{connection = Connection, connection_ref = ConnectionRef} = State) ->
 	error_logger:error_report("AMQP connection error"),
 	restart_me(State);
  
-handle_info({'DOWN', ChannelRef, process, Channel, Reason}, #state{channel = Channel, channel_ref = ChannelRef} = State) ->
+handle_info({'DOWN', ChannelRef, process, Channel, Reason}, #rabbitc_state{channel = Channel, channel_ref = ChannelRef} = State) ->
 	error_logger:error_report("AMQP channel error"),
 	restart_me(State);
  
@@ -136,7 +136,7 @@ handle_cast(connect, State) ->
 		%						
 								
 								{noreply, 
-								 State#state{
+								 State#rabbitc_state{
 									cur_con = #cur_con{
 												connection = Connection,
 			 									connection_ref = ConnectionRef,
@@ -161,7 +161,7 @@ handle_call(_Request, _From, State) ->
 	error_logger:error_report("Unsupported call message"),
 	{reply, ok, State}.
  
-terminate(_Reason, #state{connection = Connection, channel = Channel} = _State) ->
+terminate(_Reason, #rabbitc_state{connection = Connection, channel = Channel} = _State) ->
 	ok = can_channel(is_alive(Channel), Channel),
 	ok = can_connection(is_alive(Connection), Connection),
 	ok.
@@ -183,7 +183,7 @@ code_change(_OldVsn, State, _Extra) ->
  
 %%
 %% This function is called when client lost connection to RabbitMQ
-restart_me(#state{rabbitmq_restart_timeout = Wait} = State) ->
+restart_me(#rabbitc_state{rabbitmq_restart_timeout = Wait} = State) ->
 	timer:sleep(Wait), % Sleep for rabbitmq_restart_timeout seconds
 	{stop, error, State}.
 
