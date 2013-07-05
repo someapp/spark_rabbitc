@@ -99,11 +99,11 @@ handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue},
 % 	end,
 	{noreply, State}.
  
-handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #rabbitc_state{connection = Connection, connection_ref = ConnectionRef} = State) ->
+handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #rabbitc_state{#cur_con.connection = Connection, #cur_con.connection_ref = ConnectionRef} = State) ->
 	error_logger:error_report("AMQP connection error"),
 	restart_me(State);
  
-handle_info({'DOWN', ChannelRef, process, Channel, Reason}, #rabbitc_state{channel = Channel, channel_ref = ChannelRef} = State) ->
+handle_info({'DOWN', ChannelRef, process, Channel, Reason}, #rabbitc_state{#cur_con.channel = Channel, #cur_con.channel_ref = ChannelRef} = State) ->
 	error_logger:error_report("AMQP channel error"),
 	restart_me(State);
  
@@ -161,7 +161,8 @@ handle_call(_Request, _From, State) ->
 	error_logger:error_report("Unsupported call message"),
 	{reply, ok, State}.
  
-terminate(_Reason, #rabbitc_state{connection = Connection, channel = Channel} = _State) ->
+terminate(_Reason, 
+	#rabbitc_state{#cur_con.con_connection = Connection, #cur_con.channel = Channel} = _State) ->
 	ok = can_channel(is_alive(Channel), Channel),
 	ok = can_connection(is_alive(Connection), Connection),
 	ok.
