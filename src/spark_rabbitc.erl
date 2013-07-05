@@ -89,12 +89,12 @@ handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue},
 	#state{Channel = Channel} = State) ->
 	amqp_channel:cast(Channel, #'basic.ack'{delivery_tag = Tag}),
 	try
-		Message = binary_to_term(Body)
+		Message = binary_to_term(Body);
 		%
 		% Message is your payload
 		%
 	catch
-		
+		Class:Reason -> {Class, Reason}
  	end,
 	{noreply, State};
  
