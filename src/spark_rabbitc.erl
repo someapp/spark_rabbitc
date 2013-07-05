@@ -28,7 +28,7 @@
 	connection :: pid(), % rabbitMQ connection
 	connection_ref :: reference(), % connection monitor ref
 	channel :: pid(), % rabbitMQ channel
-	channel_ref :: reference(), % channel monitor ref
+	channel_ref :: reference() % channel monitor ref
 }).
  
 %% Internal state
