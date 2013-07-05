@@ -113,14 +113,15 @@ handle_info(_Info, State) ->
  
 handle_cast(connect, State) ->
 	% connection parameters
-	AMQP_Param = #amqp_params_network{
-					host = "localhost",
-					username = <<"username">>,
-					password = <<"password">>,
-					port = 5672,
-					virtual_host = <<"vhost">>,
-					heartbeat = 5 %% --- important to keep your connection alive
-				},
+	AMQP_Param = State#rabbitc_state.amqp_params;
+%	AMQP_Param = #amqp_params_network{
+%					host = "localhost",
+%					username = <<"username">>,
+%					password = <<"password">>,
+%					port = 5672,
+%					virtual_host = <<"vhost">>,
+%					heartbeat = 5 %% --- important to keep your connection alive
+%				},
 	% connection...
 	case amqp_connection:start(AMQP_Param) of
 		{ok, Connection} ->
@@ -162,7 +163,7 @@ handle_call(_Request, _From, State) ->
 	{reply, ok, State}.
  
 terminate(_Reason, 
-	#rabbitc_state{#cur_con.con_connection = Connection, #cur_con.channel = Channel} = _State) ->
+	#rabbitc_state{#cur_con.connection = Connection, #cur_con.channel = Channel} = _State) ->
 	ok = can_channel(is_alive(Channel), Channel),
 	ok = can_connection(is_alive(Connection), Connection),
 	ok.
@@ -187,4 +188,21 @@ code_change(_OldVsn, State, _Extra) ->
 restart_me(#rabbitc_state{rabbitmq_restart_timeout = Wait} = State) ->
 	timer:sleep(Wait), % Sleep for rabbitmq_restart_timeout seconds
 	{stop, error, State}.
+
+on_connection_ok()->
+	ok.
+
+on_connection_nok()->
+	ok.
+
+on_reconnect_ok()->
+	ok.
+
+on_subscribe_ok()->
+	ok.
+
+on_connsume_ok()->
+	ok.
+
+
 
