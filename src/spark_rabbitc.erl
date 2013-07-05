@@ -97,7 +97,7 @@ handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue},
 %	catch
 %		Class:Reason -> {Class, Reason}
 % 	end,
-	{noreply, State};
+	{noreply, State}.
  
 handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #state{connection = Connection, connection_ref = ConnectionRef} = State) ->
 	error_logger:error_report("AMQP connection error"),
