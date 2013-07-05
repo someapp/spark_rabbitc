@@ -36,7 +36,7 @@
 	cur_con = #cur_con{},
 	rabbitmq_restart_timeout = 5000 :: pos_integer(), % restart timeout
 	amqp_params =  #amqp_params_network{},
-	rest_params = ##rest_conf{}
+	rest_params = #rest_conf{}
 }).
 
 connect()->
@@ -93,7 +93,9 @@ handle_info({#'basic.deliver'{delivery_tag = Tag, routing_key = _Queue},
 		%
 		% Message is your payload
 		%
- 
+	catch
+		
+ 	end,
 	{noreply, State};
  
 handle_info({'DOWN', ConnectionRef, process, Connection, Reason}, #state{connection = Connection, connection_ref = ConnectionRef} = State) ->
